@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Depends, status
-from sqlalchemy.orm import Session
+from fastapi import FastAPI
 
-from app.database import engine, Base, get_db
-from app import schemas, models
+from app.database import engine, Base
+from app.routers import product
 
 
 app = FastAPI()
@@ -11,22 +10,13 @@ app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
 
+app.include_router(product.router)
+
+
+# Test root directory
 @app.get('/')
-def index():
+def root():
     return "Hello World"
-
-
-@app.post('/products', status_code=status.HTTP_201_CREATED)
-def add_product(request: schemas.Product, db: Session = Depends(get_db)):
-    new_product = models.Product(name="ab", description="cd",
-                                  image_url="ef", category="gh",
-                                    quantity=23, is_active=True,
-                                      price=55.6)
-
-    db.add(new_product)
-    db.commit()
-    db.refresh(new_product)
-    return new_product
 
 
 # if __name__ == "__main__":
