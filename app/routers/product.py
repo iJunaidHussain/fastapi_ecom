@@ -31,7 +31,7 @@ def add(request: schemas.Product, db: Session = Depends(get_db)):
 
 
 @router.get('/{id}', status_code=200)
-def get_by_id(id, db: Session = Depends(get_db)):
+def get(id: int, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id).first()
     if not product:
         raise  HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -39,8 +39,8 @@ def get_by_id(id, db: Session = Depends(get_db)):
     return product  
 
 
-@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT,)
-def delete(id, db: Session = Depends(get_db)):
+@router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
+def delete(id: int, db: Session = Depends(get_db)):
     product = db.query(models.Product).filter(models.Product.id == id).first()
     if not product:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -48,3 +48,20 @@ def delete(id, db: Session = Depends(get_db)):
     db.delete(product)
     db.commit()    
     return f"Product with the id {id} Successfully Deleted"
+
+
+@router.put('/{id}', status_code=status.HTTP_202_ACCEPTED)
+def update(id: int, request: schemas.Product, db: Session = Depends(get_db)):
+    product = db.query(models.Product).filter(models.Product.id == id).first()
+    if not product:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Product with the id {id} is not available")
+    product.name = request.name
+    product.description = request.description
+    product.image_url = request.image_url
+    product.category = request.category
+    product.quantity = request.quantity
+    product.is_active = request.is_active
+    product.price = request.price
+    db.commit()
+    return f"Product with the id {id} Successfully Updated"
