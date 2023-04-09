@@ -11,6 +11,12 @@ router = APIRouter(
 get_db = database.get_db
 
 
+@router.get('/')
+def get_all(db: Session = Depends(get_db)):
+  products = db.query(models.Product).all()
+  return products
+
+
 @router.post('/add', status_code=status.HTTP_201_CREATED)
 def add_product(request: schemas.Product, db: Session = Depends(get_db)):
     new_product = models.Product(name=request.name, description=request.description,
