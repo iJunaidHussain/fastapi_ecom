@@ -3,6 +3,6 @@ __pycache__
 
 ecom_env
 
-requirements.txt
-
 db.sqlite
+
+xyz.*
