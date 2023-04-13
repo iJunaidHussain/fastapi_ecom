@@ -12,8 +12,8 @@ get_db = database.get_db
 
 
 @router.get('/')
-def get_all(db: Session = Depends(get_db)):
-    products = db.query(models.Product).all()
+def get_all(db: Session = Depends(get_db), skip: int = 0, limit: int = 10):
+    products = db.query(models.Product).offset(skip).limit(limit).all()
     return products
 
 
