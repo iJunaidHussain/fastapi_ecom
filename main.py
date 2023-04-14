@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import uvicorn
 
 from app.database import engine, Base
 from app.routers import product
@@ -16,9 +17,8 @@ app.include_router(product.router)
 # Test root directory
 @app.get('/')
 def root():
-    return "Hello World"
+    return "FastAPI Connection Successfuly Stablished"
 
 
-# if __name__ == "__main__":
-    # uvicorn.run(app, host="127.0.0.1", port=8000)
-    # uvicorn main:app --reload
+if __name__ == "__main__":
+    uvicorn.run(app, host="127.0.0.1", port=8000)
