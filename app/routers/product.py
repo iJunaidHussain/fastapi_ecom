@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
+from typing import Optional
 
 from .. import schemas, database, models
 
@@ -14,16 +15,26 @@ get_db = database.get_db
 
 @router.get('/')
 def get_all(db: Session = Depends(get_db), skip: int = 0, limit: int = 10,
-            q: str = None):
+            is_active: Optional[bool] = None, search: str = None,
+             sort_by: str = None, sort_dir: str = 'asc'):
     query = db.query(models.Product)
-    if q:
-            query = query.filter(
-                or_(
-                models.Product.name.ilike(f'%{q}%'),
-                models.Product.category.ilike(f'%{q}%'),
-                models.Product.description.ilike(f'%{q}%')                
-                )
-            )
+
+    if is_active is not None:
+        query = query.filter(models.Product.is_active == is_active)
+
+    if search:
+            query = query.filter(or_(
+                models.Product.name.ilike(f'%{search}%'),
+                models.Product.category.ilike(f'%{search}%'),
+                models.Product.description.ilike(f'%{search}%')                
+            ))
+
+    if sort_by is not None:
+        sort_column = getattr(models.Product, sort_by)
+        if sort_dir.lower() == 'desc':
+            sort_column = sort_column.desc()
+        query = query.order_by(sort_column)
+
     products = query.offset(skip).limit(limit).all()
     return products
 
