@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class Product(BaseModel):
@@ -10,3 +11,16 @@ class Product(BaseModel):
     is_active: bool
     price: float
     
+    class Config():
+        orm_mode = True
+
+
+class User(BaseModel):
+    username: str
+    password: str
+    email: str
+    full_name: Optional[str] = None
+    disabled: Optional[bool] = False
+
+    class Config():
+        orm_mode = True
