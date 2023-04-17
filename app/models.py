@@ -13,3 +13,14 @@ class Product(Base):
     quantity = Column(Integer)
     is_active = Column(Boolean)
     price = Column(Float)
+
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String)
+    password = Column(String)
+    email = Column(String)
+    full_name = Column(String)
+    disabled = Column(Boolean)
