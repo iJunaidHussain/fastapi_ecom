@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from typing import Optional
 
 
@@ -18,7 +18,7 @@ class Product(BaseModel):
 class User(BaseModel):
     username: str
     password: str
-    email: str
+    email: EmailStr
     full_name: Optional[str] = None
     disabled: Optional[bool] = False
 
