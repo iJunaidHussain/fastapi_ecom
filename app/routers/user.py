@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
-from .. import schemas, database, models
+from .. import schemas, database, models, hashing
 
 
 router = APIRouter(
@@ -31,7 +31,8 @@ def add(request: schemas.User, db: Session = Depends(get_db)):
     if existing_email:
         raise HTTPException(status_code=400, detail='Email already exists')
 
-    new_user = models.User(username=request.username, password=request.password, 
+    new_user = models.User(username=request.username,
+                           password=hashing.Hash.bcrypt(request.password),
                            email=request.email, full_name=request.full_name,
                            disabled=request.disabled)
     db.add(new_user)
